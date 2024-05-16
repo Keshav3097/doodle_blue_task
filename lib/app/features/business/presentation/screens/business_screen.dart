@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:doodle_blur_task/view/bloc/business_bloc.dart';
-import 'package:doodle_blur_task/view/bloc/business_event.dart';
-import 'package:doodle_blur_task/view/bloc/business_state.dart';
-import 'package:doodle_blur_task/view/screens/business_details_sccreen.dart';
+import 'package:doodle_blur_task/app/core/boot_up/injection_container.dart';
+import 'package:doodle_blur_task/app/features/business/presentation/bloc/business_bloc.dart';
+import 'package:doodle_blur_task/app/features/business/presentation/bloc/business_event.dart';
+import 'package:doodle_blur_task/app/features/business/presentation/bloc/business_state.dart';
+import 'package:doodle_blur_task/app/features/business/presentation/widget/business_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'business_details_screen.dart';
 
 class BusinessScreen extends StatefulWidget {
   const BusinessScreen({super.key});
@@ -18,12 +21,17 @@ class _BusinessScreenState extends State<BusinessScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BusinessBloc()
+      create: (context) => BusinessBloc(businessUseCase: serviceLocator())
         ..add(GetBusinessesEvent()),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blue,
-          title: const Text("Businesses"),
+          backgroundColor: Colors.blue.shade600,
+          title: const Text("My Businesses",
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+            ),),
         ),
         body: BlocBuilder<BusinessBloc, BusinessState>(
             builder: (context, state)
@@ -40,17 +48,9 @@ class _BusinessScreenState extends State<BusinessScreen> {
               if(state is LoadedState)
               {
                 return ListView.builder(
-                    itemCount: state.data.length,
+                    itemCount: state.data.businesses.length,
                     itemBuilder: (context, index){
-                      return ListTile(
-                        onTap: ()
-                        {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => BusinessDetails(model: state.data[index])));
-                        },
-                        leading: SizedBox(width: 100,height: 100,child: CachedNetworkImage(imageUrl: state.data[index].image)),
-                        title: Text(state.data[index].title),
-                        subtitle: Text(state.data[index].description),
-                      );
+                      return BusinessItem(model: state.data.businesses[index]);
                     });
               }
               return const SizedBox();

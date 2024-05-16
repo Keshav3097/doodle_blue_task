@@ -1,12 +1,12 @@
 
-import 'package:doodle_blur_task/model/business_response_model.dart';
+import 'package:doodle_blur_task/app/features/business/domain/entity/business_entity.dart';
 
 class BusinessState {}
 
 class InitialState extends BusinessState {}
 class LoadingState extends BusinessState {}
 class LoadedState extends BusinessState {
-  final List<BusinessResponseModel> data;
+  final BusinessEntity data;
   LoadedState({required this.data});
 }
 
